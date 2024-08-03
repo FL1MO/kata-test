@@ -9,30 +9,41 @@ const romanDigits = {
   IV: 4,
   I: 1,
 };
-const arabToRoman = num => {
-  let ret = ""
-  for(;+num > 0;) {
-    for(let i in romanDigits) {
-      if(+num >= romanDigits[i]) {
-        ret += i;
-        num -= romanDigits[i];
-      }
+
+const arabToRoman = (num, ret = "") => {
+  for (digit in romanDigits) {
+    if(num >= romanDigits[digit]) {
+      ret += digit;
+      num - romanDigits[digit];
+      return arabToRoman(num - romanDigits[digit], ret)
+    };
+  };
+  return ret
+};
+
+const romanToArab = str => {
+  str = str.split("");
+  let ret = 0;
+  for (i = 0; i < str.length; i++) {
+    if(romanDigits[str[i]] < romanDigits[str[i + 1]]) {
+      ret -= romanDigits[str[i]]
+    } else {
+      ret += romanDigits[str[i]]
     }
   }
-  return ret;
-}
-
-const romanToArab = num => {
-  
-}
+  return ret
+};
 
 function calculator(string) {
+  if(string.split(" ").length !== 3) throw "";
   let [a, op, b] = string.split(" ");
   let ret = "";
   let isRoman = false;
-
-
   if(romanDigits[a[0]]) isRoman = true;
+  if(isRoman) {
+    a = romanToArab(a)
+    b = romanToArab(b)
+  }
 
   switch (op) {
     case "+":
@@ -48,15 +59,10 @@ function calculator(string) {
       ret = `${Math.trunc(+a / +b)}`;
       break;
     default:
-      ret = "";
+      throw "";
   }
+  if(isRoman) return arabToRoman(ret)
   return ret;
 }
-
-console.log(arabToRoman("78"))
-console.log(calculator("3 * 2"))
-// console.log(calculator("I + I"))
-// console.log(calculator(""))
-// console.log(calculator(""))
-console.log()
+console.log(calculator(""))
 module.exports = calculator; // Не трогайте эту строчку
